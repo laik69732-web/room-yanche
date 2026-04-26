@@ -3,146 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>夜语 · Crosstalk Diary</title>
+    <title>夜语 · Crosstalk</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pixelify+Sans:wght@400;700&family=Noto+Serif+SC:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Press+Start+2P&display=swap');
-        
         body {
             font-family: 'Noto Serif SC', system-ui, serif;
-            background: #F8F1E3;
-            color: #3F2A1E;
+            background: #E0F0FF; /* 浅蓝色纸张感 */
+            color: #1E3A5F;
         }
         
         .pixel-title {
             font-family: 'Press Start 2P', system-ui;
-            font-size: 1.75rem;
-            letter-spacing: 4px;
-            color: #D97757;
-            text-shadow: 2px 2px 0 #00000010;
+            font-size: 2rem;
+            letter-spacing: 6px;
+            color: #3B82F6; /* 蓝色像素标题 */
+            text-shadow: 3px 3px 0 #1E40AF;
+        }
+        
+        .sub-pixel {
+            font-family: 'Pixelify Sans', system-ui;
         }
 
         .paper {
-            background: #FBF6EB;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08),
-                        inset 0 0 80px rgba(139, 69, 19, 0.04);
-            border: 1px solid #E8D9C0;
+            background: #F0F8FF;
+            box-shadow: 0 10px 30px rgba(30, 58, 95, 0.12),
+                        inset 0 0 80px rgba(59, 130, 246, 0.06);
+            border: 2px solid #93C5FD;
         }
 
         .card {
-            background: #FBF6EB;
-            border: 2px solid #D4B99F;
-            box-shadow: 4px 6px 0 #C9A37F;
-            transition: all 0.3s ease;
+            background: #F0F8FF;
+            border: 3px solid #60A5FA;
+            box-shadow: 5px 8px 0 #1E40AF;
+            transition: all 0.4s ease;
         }
         
         .card:hover {
-            transform: translateY(-4px) rotate(1deg);
-            box-shadow: 6px 10px 0 #C9A37F;
+            transform: translateY(-6px) rotate(1deg);
+            box-shadow: 8px 12px 0 #1E40AF;
         }
 
         .tag {
-            transition: all 0.25s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            border: 2px solid #D4B99F;
-            background: #FFFDF7;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            border: 2px solid #93C5FD;
+            background: #F0F8FF;
         }
         
         .tag:hover {
-            transform: scale(1.12) rotate(2deg);
-            border-color: #E07A5F;
+            transform: scale(1.15) rotate(3deg);
+            border-color: #3B82F6;
         }
         
         .tag.selected {
-            background: linear-gradient(135deg, #E07A5F, #F4A261);
+            background: linear-gradient(135deg, #3B82F6, #60A5FA);
             color: white;
-            border-color: #C05A3F;
-            box-shadow: 0 0 0 3px #F8F1E3;
+            border-color: #1E40AF;
+            box-shadow: 0 0 0 4px #E0F0FF;
+        }
+
+        .bean-img {
+            image-rendering: pixelated; /* 保持像素感 */
+            filter: drop-shadow(3px 4px 2px rgba(30,58,95,0.3));
         }
 
         .record-card {
-            animation: popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+            animation: popIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
         }
 
         @keyframes popIn {
-            from { opacity: 0; transform: translateY(30px) rotate(-3deg); }
-            to { opacity: 1; transform: translateY(0) rotate(0); }
-        }
-
-        .dot-bg {
-            background-image: 
-                radial-gradient(circle, #D4B99F 1px, transparent 1px);
-            background-size: 24px 24px;
+            from { opacity: 0; transform: translateY(40px) scale(0.92); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
     </style>
 </head>
-<body class="min-h-screen pb-20 dot-bg">
-    <div class="max-w-xl mx-auto px-5 pt-8">
-        <!-- 标题区 - Crosstalk 风格 -->
-        <div class="flex flex-col items-center mb-10">
-            <div class="flex items-center gap-4">
-                <div class="w-10 h-10 bg-[#E07A5F] rounded flex items-center justify-center text-white text-2xl shadow-md">📻</div>
-                <h1 class="pixel-title tracking-widest">CROSS TALK</h1>
+<body class="min-h-screen pb-20">
+    <div class="max-w-2xl mx-auto px-6 pt-10">
+        <!-- 标题 -->
+        <div class="flex flex-col items-center mb-12">
+            <div class="flex items-center gap-5">
+                <div class="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center text-3xl shadow">🧵</div>
+                <h1 class="pixel-title">CROSS TALK</h1>
             </div>
-            <p class="text-xs text-[#8C6F4E] mt-1 tracking-[3px]">夜语日记 · 2026</p>
+            <p class="sub-pixel text-blue-600 text-sm tracking-[4px] mt-2">夜语日记 · 拼豆陪伴</p>
         </div>
 
-        <!-- 输入区域 -->
-        <div class="paper rounded-3xl p-8 mb-12 border-2 border-[#D4B99F]">
+        <!-- 输入区 -->
+        <div class="paper rounded-3xl p-8 mb-12">
             <div class="space-y-8">
-                <!-- 歌曲 -->
                 <div>
-                    <div class="flex items-center gap-2 mb-2 text-[#8C6F4E]">
-                        <span class="text-xl">🎵</span>
-                        <span class="font-medium tracking-wider text-sm">今日单曲</span>
+                    <div class="flex items-center gap-3 mb-3 text-blue-700">
+                        <span class="text-2xl">🎵</span>
+                        <span class="sub-pixel font-medium tracking-widest">今日单曲</span>
                     </div>
-                    <input id="songInput" type="text" 
-                           placeholder="今天循环了哪首歌？"
-                           class="w-full bg-white border-2 border-[#E8D9C0] focus:border-[#E07A5F] rounded-2xl px-5 py-4 text-base outline-none">
+                    <input id="songInput" type="text" placeholder="今天听了什么歌呀～" 
+                           class="w-full bg-white border-2 border-blue-200 focus:border-blue-500 rounded-2xl px-6 py-4 outline-none text-base">
                 </div>
 
-                <!-- 情绪标签 -->
                 <div>
-                    <div class="flex items-center gap-2 mb-3 text-[#8C6F4E]">
-                        <span class="text-xl">☁️</span>
-                        <span class="font-medium tracking-wider text-sm">此刻心情</span>
+                    <div class="flex items-center gap-3 mb-4 text-blue-700">
+                        <span class="text-2xl">☁️</span>
+                        <span class="sub-pixel font-medium tracking-widest">此刻心情</span>
                     </div>
                     <div id="tagsContainer" class="grid grid-cols-3 gap-3">
                         <!-- JS 生成 -->
                     </div>
                 </div>
 
-                <!-- 记录内容 -->
                 <div>
-                    <div class="flex items-center gap-2 mb-2 text-[#8C6F4E]">
-                        <span class="text-xl">✍️</span>
-                        <span class="font-medium tracking-wider text-sm">写给今晚的自己</span>
+                    <div class="flex items-center gap-3 mb-3 text-blue-700">
+                        <span class="text-2xl">✍️</span>
+                        <span class="sub-pixel font-medium tracking-widest">写给今晚的自己</span>
                     </div>
-                    <textarea id="contentInput" rows="5" 
-                              placeholder="今天发生了什么……想说的话，就写在这里吧。"
-                              class="w-full bg-white border-2 border-[#E8D9C0] focus:border-[#E07A5F] rounded-3xl px-5 py-5 text-base outline-none resize-none"></textarea>
+                    <textarea id="contentInput" rows="5" placeholder="今天过得怎么样……我在这里陪着你。"
+                              class="w-full bg-white border-2 border-blue-200 focus:border-blue-500 rounded-3xl px-6 py-5 outline-none resize-none"></textarea>
                 </div>
 
-                <!-- 保存按钮 -->
                 <button onclick="saveRecord()" 
-                        class="w-full py-5 bg-gradient-to-r from-[#E07A5F] to-[#F4A261] text-white font-medium rounded-2xl text-lg shadow-md active:scale-95 transition-all border-b-4 border-[#C05A3F]">
-                    保存这页日记
+                        class="w-full py-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium rounded-3xl text-lg shadow-lg active:scale-95 transition-all border-b-4 border-blue-700">
+                    保存这页 · 配一个拼豆
                 </button>
             </div>
         </div>
 
         <!-- 记录列表 -->
-        <div class="flex justify-between items-center mb-6 px-1">
-            <h2 class="text-xl font-medium text-[#5C4633]">我的记录</h2>
-            <span id="recordCount" class="text-sm text-[#8C6F4E]">0 条</span>
-        </div>
+        <h2 class="sub-pixel text-2xl text-blue-800 mb-6 flex items-center gap-3">
+            <span>我的夜语记录</span>
+            <span id="recordCount" class="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full">0 条</span>
+        </h2>
 
-        <div id="recordsContainer" class="space-y-8">
-            <!-- JS 动态插入 -->
+        <div id="recordsContainer" class="space-y-10">
+            <!-- JS 动态插入，每条带随机拼豆 -->
         </div>
     </div>
 
     <script>
+        // 拼豆图案库（真实拼豆风格，可爱不重复，优先蓝色系）
+        const beanPool = [
+            "https://picsum.photos/id/1015/120/120", // 苹果格子
+            "https://picsum.photos/id/237/120/120",  // 狗狗
+            "https://picsum.photos/id/669/120/120",  // 玫瑰
+            "https://picsum.photos/id/201/120/120",  // 冰淇淋
+            "https://picsum.photos/id/133/120/120",  // 猫咪
+            "https://picsum.photos/id/180/120/120",  // 鸭子
+            "https://picsum.photos/id/251/120/120",  // 奶牛
+            "https://picsum.photos/id/870/120/120",  // 兔子
+            "https://picsum.photos/id/1005/120/120", // 花朵
+            "https://picsum.photos/id/106/120/120"   // Snoopy风格
+        ];
+
+        let usedBeans = new Set(); // 避免短期重复
+
+        function getRandomBean() {
+            let bean;
+            do {
+                bean = beanPool[Math.floor(Math.random() * beanPool.length)];
+            } while (usedBeans.has(bean) && usedBeans.size < beanPool.length - 2);
+            
+            usedBeans.add(bean);
+            if (usedBeans.size > 8) usedBeans.clear(); // 循环使用
+            return bean;
+        }
+
         const emotions = [
             {name: "平静", emoji: "🌊"},
             {name: "温柔", emoji: "🌸"},
@@ -152,19 +175,19 @@
             {name: "期待", emoji: "🌟"},
             {name: "失落", emoji: "🌧️"},
             {name: "温暖", emoji: "🧸"},
-            {name: "迷茫", emoji: "🌫️"}
+            {name: "安心", emoji: "🛡️"}
         ];
 
         let selectedTags = [];
-        let records = JSON.parse(localStorage.getItem('crosstalkDiary')) || [];
+        let records = JSON.parse(localStorage.getItem('blueCrosstalkDiary')) || [];
 
         function renderTags() {
             const container = document.getElementById('tagsContainer');
             container.innerHTML = '';
             emotions.forEach(emo => {
                 const tag = document.createElement('div');
-                tag.className = `tag text-center py-3 px-4 rounded-2xl text-sm cursor-pointer select-none flex items-center justify-center gap-1.5`;
-                tag.innerHTML = `${emo.emoji} ${emo.name}`;
+                tag.className = `tag text-center py-3.5 px-5 rounded-2xl text-sm cursor-pointer flex items-center justify-center gap-2 border`;
+                tag.innerHTML = `${emo.emoji} <span class="sub-pixel">${emo.name}</span>`;
                 tag.addEventListener('click', () => {
                     if (selectedTags.includes(emo.name)) {
                         selectedTags = selectedTags.filter(t => t !== emo.name);
@@ -183,7 +206,7 @@
             const content = document.getElementById('contentInput').value.trim();
 
             if (!content && selectedTags.length === 0) {
-                alert('写点什么吧～');
+                alert('写点什么，或者选个心情吧～');
                 return;
             }
 
@@ -193,24 +216,18 @@
                 time: new Date().toLocaleTimeString('zh-CN', {hour:'2-digit', minute:'2-digit'}),
                 song: song || "未记录歌曲",
                 tags: [...selectedTags],
-                content: content || "今天只想静静地翻一页日记。"
+                content: content || "今天只想静静地和拼豆们待一会儿。",
+                bean: getRandomBean()  // 每条记录一个独特拼豆
             };
 
             records.unshift(newRecord);
-            localStorage.setItem('crosstalkDiary', JSON.stringify(records));
+            localStorage.setItem('blueCrosstalkDiary', JSON.stringify(records));
 
-            // 清空
             document.getElementById('songInput').value = '';
             document.getElementById('contentInput').value = '';
             selectedTags = [];
             renderTags();
             renderRecords();
-
-            // 反馈
-            const btn = document.querySelector('button');
-            const origText = btn.textContent;
-            btn.textContent = '已保存 ✓';
-            setTimeout(() => btn.textContent = origText, 1500);
         }
 
         function renderRecords() {
@@ -220,22 +237,39 @@
 
             records.forEach((r, i) => {
                 const div = document.createElement('div');
-                div.className = `record-card paper rounded-3xl p-7`;
-                div.style.animationDelay = (i * 60) + 'ms';
+                div.className = `record-card paper rounded-3xl p-8 flex gap-6`;
+                div.style.animationDelay = (i * 80) + 'ms';
 
-                let tagHTML = r.tags.map(t => 
-                    `<span class="inline-block bg-[#FFFDF7] border border-[#E8D9C0] text-xs px-4 py-1 rounded-xl mr-2 mb-2">${t}</span>`
+                let tagsHTML = r.tags.map(t => 
+                    `<span class="inline-block bg-blue-100 text-blue-700 text-xs px-4 py-1 rounded-2xl mr-2 mb-2">${t}</span>`
                 ).join('');
 
                 div.innerHTML = `
-                    <div class="flex justify-between text-xs text-[#8C6F4E]">
-                        <div>${r.date}　${r.time}</div>
-                        <div class="text-xl">📖</div>
+                    <!-- 左侧拼豆 -->
+                    <div class="w-28 h-28 flex-shrink-0 bg-white rounded-2xl border-4 border-blue-300 p-2 flex items-center justify-center overflow-hidden">
+                        <img src="${r.bean}" alt="拼豆" class="bean-img w-full h-full object-contain">
                     </div>
-                    ${r.song ? `<div class="mt-4 flex items-center gap-2 text-[#E07A5F]"><span class="text-lg">♫</span><span class="line-clamp-1">${r.song}</span></div>` : ''}
-                    <div class="my-6 leading-relaxed text-[#3F2A1E] text-[15.5px]">${r.content}</div>
-                    <div class="flex flex-wrap">${tagHTML}</div>
-                    <div class="mt-6 pt-5 border-t border-[#E8D9C0] text-xs text-[#8C6F4E]">晚安，今晚也好好被温柔对待。</div>
+                    
+                    <!-- 右侧内容 -->
+                    <div class="flex-1 min-w-0">
+                        <div class="flex justify-between text-xs text-blue-600">
+                            <div class="sub-pixel">${r.date}　${r.time}</div>
+                            <div class="text-xl opacity-70">📖</div>
+                        </div>
+                        
+                        ${r.song ? `<div class="mt-4 flex items-center gap-2 text-blue-500 text-sm"><span>♫</span><span class="line-clamp-1">${r.song}</span></div>` : ''}
+                        
+                        <div class="my-6 leading-relaxed text-[#1E3A5F] text-[15.5px] min-h-[80px]">
+                            ${r.content}
+                        </div>
+                        
+                        <div class="flex flex-wrap">${tagsHTML}</div>
+                        
+                        <div class="mt-6 pt-5 border-t border-blue-200 text-xs text-blue-600 flex items-center gap-2">
+                            <span class="text-lg">🧵</span>
+                            <span>今晚也和拼豆一起，好好休息吧。</span>
+                        </div>
+                    </div>
                 `;
                 container.appendChild(div);
             });
