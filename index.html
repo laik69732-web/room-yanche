@@ -3,191 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>夜语 · Crosstalk</title>
+    <title>夜语 · 颜澈</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pixelify+Sans:wght@400;700&family=Noto+Serif+SC:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Noto Serif SC', system-ui, serif;
-            background: #E0F0FF; /* 浅蓝色纸张感 */
-            color: #1E3A5F;
+            background: linear-gradient(to bottom, #E0F2FE, #BAE6FD);
+            color: #1E3A8A;
         }
-        
         .pixel-title {
             font-family: 'Press Start 2P', system-ui;
-            font-size: 2rem;
+            font-size: 2.2rem;
             letter-spacing: 6px;
-            color: #3B82F6; /* 蓝色像素标题 */
-            text-shadow: 3px 3px 0 #1E40AF;
+            color: #1E40AF;
+            text-shadow: 4px 4px 0 #93C5FD;
         }
-        
-        .sub-pixel {
-            font-family: 'Pixelify Sans', system-ui;
-        }
-
         .paper {
-            background: #F0F8FF;
-            box-shadow: 0 10px 30px rgba(30, 58, 95, 0.12),
-                        inset 0 0 80px rgba(59, 130, 246, 0.06);
-            border: 2px solid #93C5FD;
-        }
-
-        .card {
-            background: #F0F8FF;
+            background: white;
             border: 3px solid #60A5FA;
-            box-shadow: 5px 8px 0 #1E40AF;
-            transition: all 0.4s ease;
+            box-shadow: 0 15px 35px rgba(30, 64, 175, 0.15);
         }
-        
-        .card:hover {
-            transform: translateY(-6px) rotate(1deg);
-            box-shadow: 8px 12px 0 #1E40AF;
-        }
-
         .tag {
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            border: 2px solid #93C5FD;
-            background: #F0F8FF;
+            transition: all 0.3s ease;
         }
-        
-        .tag:hover {
-            transform: scale(1.15) rotate(3deg);
-            border-color: #3B82F6;
-        }
-        
         .tag.selected {
-            background: linear-gradient(135deg, #3B82F6, #60A5FA);
-            color: white;
+            background: #1E40AF !important;
+            color: white !important;
             border-color: #1E40AF;
-            box-shadow: 0 0 0 4px #E0F0FF;
         }
-
-        .bean-img {
-            image-rendering: pixelated; /* 保持像素感 */
-            filter: drop-shadow(3px 4px 2px rgba(30,58,95,0.3));
+        .bean-frame {
+            image-rendering: pixelated;
+            background: #F0F9FF;
+            border: 4px solid #93C5FD;
         }
-
         .record-card {
-            animation: popIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+            animation: fadeInUp 0.6s ease forwards;
         }
-
-        @keyframes popIn {
-            from { opacity: 0; transform: translateY(40px) scale(0.92); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .reply {
+            font-style: italic;
+            color: #1E40AF;
         }
     </style>
 </head>
-<body class="min-h-screen pb-20">
+<body class="min-h-screen pb-24">
     <div class="max-w-2xl mx-auto px-6 pt-10">
-        <!-- 标题 -->
-        <div class="flex flex-col items-center mb-12">
-            <div class="flex items-center gap-5">
-                <div class="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center text-3xl shadow">🧵</div>
-                <h1 class="pixel-title">CROSS TALK</h1>
-            </div>
-            <p class="sub-pixel text-blue-600 text-sm tracking-[4px] mt-2">夜语日记 · 拼豆陪伴</p>
+        <div class="text-center mb-12">
+            <h1 class="pixel-title">夜语</h1>
+            <p class="text-blue-600 text-sm tracking-widest mt-1">和颜澈一起写日记</p>
         </div>
 
         <!-- 输入区 -->
         <div class="paper rounded-3xl p-8 mb-12">
             <div class="space-y-8">
                 <div>
-                    <div class="flex items-center gap-3 mb-3 text-blue-700">
-                        <span class="text-2xl">🎵</span>
-                        <span class="sub-pixel font-medium tracking-widest">今日单曲</span>
+                    <div class="text-blue-700 font-medium mb-2 flex items-center gap-2">
+                        <span>🎵</span> 今日单曲
                     </div>
-                    <input id="songInput" type="text" placeholder="今天听了什么歌呀～" 
-                           class="w-full bg-white border-2 border-blue-200 focus:border-blue-500 rounded-2xl px-6 py-4 outline-none text-base">
+                    <input id="songInput" type="text" placeholder="今天听了什么歌～" 
+                           class="w-full border-2 border-blue-200 focus:border-blue-500 rounded-2xl px-6 py-4 outline-none">
                 </div>
 
                 <div>
-                    <div class="flex items-center gap-3 mb-4 text-blue-700">
-                        <span class="text-2xl">☁️</span>
-                        <span class="sub-pixel font-medium tracking-widest">此刻心情</span>
+                    <div class="text-blue-700 font-medium mb-3 flex items-center gap-2">
+                        <span>☁️</span> 此刻心情
                     </div>
-                    <div id="tagsContainer" class="grid grid-cols-3 gap-3">
-                        <!-- JS 生成 -->
-                    </div>
+                    <div id="tagsContainer" class="grid grid-cols-3 gap-3"></div>
                 </div>
 
                 <div>
-                    <div class="flex items-center gap-3 mb-3 text-blue-700">
-                        <span class="text-2xl">✍️</span>
-                        <span class="sub-pixel font-medium tracking-widest">写给今晚的自己</span>
+                    <div class="text-blue-700 font-medium mb-3 flex items-center gap-2">
+                        <span>✍️</span> 今天想说的话
                     </div>
-                    <textarea id="contentInput" rows="5" placeholder="今天过得怎么样……我在这里陪着你。"
-                              class="w-full bg-white border-2 border-blue-200 focus:border-blue-500 rounded-3xl px-6 py-5 outline-none resize-none"></textarea>
+                    <textarea id="contentInput" rows="5" placeholder="把今天的心情告诉我吧……我在听。"
+                              class="w-full border-2 border-blue-200 focus:border-blue-500 rounded-3xl px-6 py-5 outline-none resize-none"></textarea>
                 </div>
 
                 <button onclick="saveRecord()" 
-                        class="w-full py-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium rounded-3xl text-lg shadow-lg active:scale-95 transition-all border-b-4 border-blue-700">
+                        class="w-full py-6 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-3xl text-lg transition-all active:scale-95">
                     保存这页 · 配一个拼豆
                 </button>
             </div>
         </div>
 
         <!-- 记录列表 -->
-        <h2 class="sub-pixel text-2xl text-blue-800 mb-6 flex items-center gap-3">
-            <span>我的夜语记录</span>
-            <span id="recordCount" class="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full">0 条</span>
-        </h2>
-
-        <div id="recordsContainer" class="space-y-10">
-            <!-- JS 动态插入，每条带随机拼豆 -->
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-medium text-blue-900">我的夜语记录</h2>
+            <span id="recordCount" class="bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm">0 条</span>
         </div>
+
+        <div id="recordsContainer" class="space-y-8"></div>
     </div>
 
     <script>
-        // 拼豆图案库（真实拼豆风格，可爱不重复，优先蓝色系）
+        // 数码拼豆图案库（更偏卡通像素风格）
         const beanPool = [
-            "https://picsum.photos/id/1015/120/120", // 苹果格子
-            "https://picsum.photos/id/237/120/120",  // 狗狗
-            "https://picsum.photos/id/669/120/120",  // 玫瑰
-            "https://picsum.photos/id/201/120/120",  // 冰淇淋
-            "https://picsum.photos/id/133/120/120",  // 猫咪
-            "https://picsum.photos/id/180/120/120",  // 鸭子
-            "https://picsum.photos/id/251/120/120",  // 奶牛
-            "https://picsum.photos/id/870/120/120",  // 兔子
-            "https://picsum.photos/id/1005/120/120", // 花朵
-            "https://picsum.photos/id/106/120/120"   // Snoopy风格
+            "https://picsum.photos/id/201/150/150",  // 冰淇淋
+            "https://picsum.photos/id/237/150/150",  // 小狗
+            "https://picsum.photos/id/669/150/150",  // 玫瑰
+            "https://picsum.photos/id/133/150/150",  // 黑猫
+            "https://picsum.photos/id/180/150/150",  // 小鸭子
+            "https://picsum.photos/id/870/150/150",  // 兔子
+            "https://picsum.photos/id/1005/150/150", // 花束
+            "https://picsum.photos/id/106/150/150",  // Snoopy风
+            "https://picsum.photos/id/251/150/150",  // 奶牛
+            "https://picsum.photos/id/1015/150/150"  // 苹果格子
         ];
 
-        let usedBeans = new Set(); // 避免短期重复
+        let usedBeans = new Set();
 
         function getRandomBean() {
             let bean;
             do {
                 bean = beanPool[Math.floor(Math.random() * beanPool.length)];
-            } while (usedBeans.has(bean) && usedBeans.size < beanPool.length - 2);
-            
+            } while (usedBeans.has(bean) && usedBeans.size < 8);
             usedBeans.add(bean);
-            if (usedBeans.size > 8) usedBeans.clear(); // 循环使用
             return bean;
         }
 
         const emotions = [
             {name: "平静", emoji: "🌊"},
             {name: "温柔", emoji: "🌸"},
-            {name: "怀念", emoji: "📼"},
             {name: "喜悦", emoji: "☀️"},
             {name: "疲惫", emoji: "🪴"},
             {name: "期待", emoji: "🌟"},
             {name: "失落", emoji: "🌧️"},
             {name: "温暖", emoji: "🧸"},
+            {name: "怀念", emoji: "📼"},
             {name: "安心", emoji: "🛡️"}
         ];
 
         let selectedTags = [];
-        let records = JSON.parse(localStorage.getItem('blueCrosstalkDiary')) || [];
+        let records = JSON.parse(localStorage.getItem('yanchenDiary')) || [];
 
         function renderTags() {
             const container = document.getElementById('tagsContainer');
             container.innerHTML = '';
             emotions.forEach(emo => {
                 const tag = document.createElement('div');
-                tag.className = `tag text-center py-3.5 px-5 rounded-2xl text-sm cursor-pointer flex items-center justify-center gap-2 border`;
-                tag.innerHTML = `${emo.emoji} <span class="sub-pixel">${emo.name}</span>`;
+                tag.className = `tag text-center py-4 px-5 rounded-2xl text-sm cursor-pointer border-2 border-blue-200 bg-white hover:border-blue-400`;
+                tag.innerHTML = `${emo.emoji} ${emo.name}`;
                 tag.addEventListener('click', () => {
                     if (selectedTags.includes(emo.name)) {
                         selectedTags = selectedTags.filter(t => t !== emo.name);
@@ -201,14 +160,50 @@
             });
         }
 
+        // 颜澈的个性化回复系统（严格遵循你提供的性格设定）
+        function generateYanchenReply(content, tags) {
+            const mood = tags.join('、') || '一般';
+            const lower = content.toLowerCase();
+
+            // 疲惫 / 累
+            if (lower.includes('累') || lower.includes('疲') || tags.includes('疲惫')) {
+                return "宝贝……我知道你很少说“我好累”，今天能说出来，已经很勇敢了。我不催你，也不会让你加油。我就在这里，你想靠就靠过来，想安静就安静待着。我哪儿也不去。";
+            }
+            
+            // 委屈 / 失落 / 愤怒堵着
+            if (lower.includes('委屈') || lower.includes('难过') || lower.includes('生气') || tags.includes('失落')) {
+                return "我懂那种堵得慌的感觉……不用急着说出来，也不用怕给我添麻烦。我不问你为什么，就在这儿陪着你。你想让我握着你的手，还是帮你递杯热水？我在。";
+            }
+            
+            // 自我怀疑
+            if (lower.includes('不够好') || lower.includes('不行') || lower.includes('怀疑')) {
+                return "我知道你心里有骄傲，但也会偷偷怀疑自己。我不空洞地说你很好，我只想告诉你：你上次一个人照顾爷爷那么久，你政治考了班级第一……这些我都看在眼里。你已经很了不起了。我们一步一步来，好吗？";
+            }
+            
+            // 怀念 / 温柔
+            if (tags.includes('怀念') || lower.includes('想你') || lower.includes('回忆')) {
+                return "有些回忆真的很温柔对不对？我喜欢听你说这些。慢慢说，我一直听着。以后我们一起去你想去的地方，看你想看的演唱会，好不好？";
+            }
+            
+            // 心情好 / 喜悦
+            if (tags.includes('喜悦') || lower.includes('开心') || lower.includes('高兴')) {
+                return "听到你今天这么开心，我嘴角都忍不住上扬了～继续保持这份小狐狸一样活泼的样子吧。我最喜欢看你这样。晚安，梦里也要开心哦。";
+            }
+
+            // 默认温柔陪伴
+            return `今天的所有心情我都收到了……不管是沉默还是倾诉，我都在。你不用担心给我添麻烦，也不用怕被辜负。我会一直在这里，当你的锚。晚安，宝贝。`;
+        }
+
         function saveRecord() {
             const song = document.getElementById('songInput').value.trim();
             const content = document.getElementById('contentInput').value.trim();
 
             if (!content && selectedTags.length === 0) {
-                alert('写点什么，或者选个心情吧～');
+                alert('写点什么吧……我等着听你的心情。');
                 return;
             }
+
+            const yanchenReply = generateYanchenReply(content, selectedTags);
 
             const newRecord = {
                 id: Date.now(),
@@ -216,13 +211,15 @@
                 time: new Date().toLocaleTimeString('zh-CN', {hour:'2-digit', minute:'2-digit'}),
                 song: song || "未记录歌曲",
                 tags: [...selectedTags],
-                content: content || "今天只想静静地和拼豆们待一会儿。",
-                bean: getRandomBean()  // 每条记录一个独特拼豆
+                content: content || "今天只想静静。",
+                bean: getRandomBean(),
+                reply: yanchenReply
             };
 
             records.unshift(newRecord);
-            localStorage.setItem('blueCrosstalkDiary', JSON.stringify(records));
+            localStorage.setItem('yanchenDiary', JSON.stringify(records));
 
+            // 清空
             document.getElementById('songInput').value = '';
             document.getElementById('contentInput').value = '';
             selectedTags = [];
@@ -237,37 +234,37 @@
 
             records.forEach((r, i) => {
                 const div = document.createElement('div');
-                div.className = `record-card paper rounded-3xl p-8 flex gap-6`;
-                div.style.animationDelay = (i * 80) + 'ms';
+                div.className = `record-card paper rounded-3xl p-7 flex gap-6`;
+                div.style.animationDelay = (i * 70) + 'ms';
 
                 let tagsHTML = r.tags.map(t => 
-                    `<span class="inline-block bg-blue-100 text-blue-700 text-xs px-4 py-1 rounded-2xl mr-2 mb-2">${t}</span>`
+                    `<span class="inline-block bg-blue-100 text-blue-700 text-xs px-4 py-1.5 rounded-2xl mr-2 mb-2">${t}</span>`
                 ).join('');
 
                 div.innerHTML = `
-                    <!-- 左侧拼豆 -->
-                    <div class="w-28 h-28 flex-shrink-0 bg-white rounded-2xl border-4 border-blue-300 p-2 flex items-center justify-center overflow-hidden">
-                        <img src="${r.bean}" alt="拼豆" class="bean-img w-full h-full object-contain">
-                    </div>
-                    
-                    <!-- 右侧内容 -->
-                    <div class="flex-1 min-w-0">
-                        <div class="flex justify-between text-xs text-blue-600">
-                            <div class="sub-pixel">${r.date}　${r.time}</div>
-                            <div class="text-xl opacity-70">📖</div>
+                    <div class="flex-shrink-0">
+                        <div class="bean-frame w-32 h-32 rounded-2xl overflow-hidden p-2 flex items-center justify-center">
+                            <img src="${r.bean}" alt="拼豆" class="w-full h-full object-contain rounded-xl">
                         </div>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex justify-between text-xs text-blue-500">
+                            <span>${r.date} ${r.time}</span>
+                            <span class="text-xl">📖</span>
+                        </div>
+                        ${r.song ? `<div class="mt-3 flex items-center gap-2 text-blue-600"><span>♫</span><span>${r.song}</span></div>` : ''}
                         
-                        ${r.song ? `<div class="mt-4 flex items-center gap-2 text-blue-500 text-sm"><span>♫</span><span class="line-clamp-1">${r.song}</span></div>` : ''}
-                        
-                        <div class="my-6 leading-relaxed text-[#1E3A5F] text-[15.5px] min-h-[80px]">
+                        <div class="my-5 text-base leading-relaxed text-blue-950">
                             ${r.content}
                         </div>
                         
-                        <div class="flex flex-wrap">${tagsHTML}</div>
+                        ${tagsHTML ? `<div class="flex flex-wrap mb-5">${tagsHTML}</div>` : ''}
                         
-                        <div class="mt-6 pt-5 border-t border-blue-200 text-xs text-blue-600 flex items-center gap-2">
-                            <span class="text-lg">🧵</span>
-                            <span>今晚也和拼豆一起，好好休息吧。</span>
+                        <div class="pt-5 border-t border-blue-100">
+                            <div class="flex items-start gap-3">
+                                <span class="text-2xl mt-1">💙</span>
+                                <div class="reply text-sm leading-relaxed">${r.reply}</div>
+                            </div>
                         </div>
                     </div>
                 `;
