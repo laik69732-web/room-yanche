@@ -1,64 +1,83 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>ROOM · 颜澈</title>
+<meta charset="utf-8">
+<title>ROOM</title>
 
 <style>
 body{
   margin:0;
-  font-family:sans-serif;
-  background:linear-gradient(#0b1a2a,#02060d);
-  color:white;
+  font-family:-apple-system;
+  background:#02060d;
+  color:#fff;
 }
 
 .container{
+  max-width:500px;
+  margin:auto;
   padding:20px;
 }
 
+/* 首页 */
 .card{
-  padding:15px;
-  border:1px solid #3a5a7a;
-  border-radius:12px;
-  margin-bottom:10px;
-  cursor:pointer;
+  padding:16px;
+  margin-bottom:12px;
+  border-radius:18px;
+  background:rgba(255,255,255,0.05);
 }
 
-.vinyl{
-  width:60px;
-  height:60px;
-  border-radius:50%;
-  background:radial-gradient(circle,#222 40%,#000 70%);
-  margin-bottom:10px;
-}
-
-.page{
+/* 房间（沉浸） */
+.room{
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:#02060d;
+  padding:20px;
   display:none;
 }
 
-.active{
-  display:block;
+.show{display:block}
+
+/* 聊天 */
+.msg{
+  margin:12px 0;
+  max-width:80%;
+  padding:12px;
+  border-radius:14px;
 }
 
-textarea,input{
+.me{
+  background:#4c7fff;
+  margin-left:auto;
+}
+
+.him{
+  background:rgba(255,255,255,0.08);
+}
+
+/* 输入 */
+input,textarea{
   width:100%;
-  padding:10px;
-  margin-top:10px;
-  border-radius:8px;
+  padding:12px;
+  border-radius:12px;
   border:none;
+  margin-top:10px;
+  background:rgba(255,255,255,0.06);
+  color:#fff;
 }
 
 button{
   margin-top:10px;
-  padding:10px;
+  width:100%;
+  padding:12px;
   border:none;
-  border-radius:8px;
-  background:#3a5a7a;
-  color:white;
+  border-radius:12px;
+  background:#4c7fff;
 }
 
-.chat{
-  margin-top:10px;
+.topbar{
+  margin-bottom:10px;
+  opacity:0.6;
 }
 </style>
 </head>
@@ -67,134 +86,117 @@ button{
 
 <div class="container">
 
-<h2>ROOM · 颜澈</h2>
+<h2>ROOM</h2>
 
-<!-- 首页 -->
-<div id="home" class="page active">
-
-<input id="musicName" placeholder="今天的歌（歌名+歌手）">
-<textarea id="feeling" placeholder="你现在的感觉…"></textarea>
+<input id="song" placeholder="歌名 + 歌手">
+<textarea id="feeling" placeholder="这一刻的感觉..."></textarea>
 <button onclick="add()">保存</button>
 
 <div id="list"></div>
 
 </div>
 
-<!-- 聊天页 -->
-<div id="chat" class="page">
+<!-- 房间 -->
+<div id="room" class="room">
+  <div class="topbar" onclick="closeRoom()">← 返回</div>
+  <h3 id="roomTitle"></h3>
+  <div id="chat"></div>
 
-<h3 id="title"></h3>
-
-<div id="chatBox"></div>
-
-<textarea id="chatInput" placeholder="想说点什么…"></textarea>
-<button onclick="send()">发送</button>
-<button onclick="back()">返回</button>
-
-</div>
-
+  <textarea id="input"></textarea>
+  <button onclick="send()">发送</button>
 </div>
 
 <script>
 
 let current = 0;
 
-function add(){
-  let name = document.getElementById("musicName").value;
-  let feeling = document.getElementById("feeling").value;
+// 🧠 更像人的回复（沉浸版）
+function reply(t){
+  const arr=[
+    "你刚刚那句话，其实没有说完。",
+    "你是在想一个人，还是一个阶段？",
+    "这种感觉不会突然来的，你已经带着它一段时间了。",
+    "你不是突然这样，是慢慢变成这样的。",
+    "你在这个点上停住了，对吗。",
+    "我在，你可以慢慢说。",
+    "这不像是随便说的，更像是压了很久。",
+    "你其实是知道原因的，只是还没说出口。"
+  ];
+  return arr[Math.floor(Math.random()*arr.length)];
+}
 
-  let data = JSON.parse(localStorage.getItem("music")||"[]");
+// 💾 保存
+function add(){
+  let data=JSON.parse(localStorage.getItem("music")||"[]");
 
   data.push({
-    name,
-    messages:[
-      {role:"user",content:feeling},
-      {role:"ai",content:reply(feeling)}
-    ]
+    song:song.value,
+    chat:[{me:feeling.value,him:reply(feeling.value)}]
   });
 
   localStorage.setItem("music",JSON.stringify(data));
-
   load();
 }
 
+// 📀 列表
 function load(){
-  let data = JSON.parse(localStorage.getItem("music")||"[]");
-  let list = document.getElementById("list");
-
-  list.innerHTML="";
-
-  data.forEach((d,i)=>{
-    let div=document.createElement("div");
-    div.className="card";
-
-    div.innerHTML=`
-      <div class="vinyl"></div>
-      <b>${d.name}</b>
-      <div>${d.messages[0].content}</div>
-    `;
-
-    div.onclick=()=>openChat(i);
-
-    list.appendChild(div);
-  });
+  let data=JSON.parse(localStorage.getItem("music")||"[]");
+  list.innerHTML=data.map((d,i)=>`
+    <div class="card" onclick="openRoom(${i})">${d.song}</div>
+  `).join("");
 }
 
-function openChat(i){
+// 🚪 进入房间（关键）
+function openRoom(i){
   current=i;
 
-  document.getElementById("home").classList.remove("active");
-  document.getElementById("chat").classList.add("active");
+  let data=JSON.parse(localStorage.getItem("music")||"[]");
+
+  room.classList.add("show");
+  roomTitle.innerText=data[i].song;
 
   render();
 }
 
-function back(){
-  document.getElementById("chat").classList.remove("active");
-  document.getElementById("home").classList.add("active");
+// ❌ 退出
+function closeRoom(){
+  room.classList.remove("show");
 }
 
+// 💬 渲染聊天
 function render(){
-  let data = JSON.parse(localStorage.getItem("music")||"[]");
-  let chat = data[current].messages;
+  let data=JSON.parse(localStorage.getItem("music")||"[]");
+  let html="";
 
-  document.getElementById("title").innerText=data[current].name;
-
-  let box=document.getElementById("chatBox");
-  box.innerHTML="";
-
-  chat.forEach(m=>{
-    box.innerHTML+=`<div class="chat"><b>${m.role=="user"?"你":"他"}：</b>${m.content}</div>`;
+  data[current].chat.forEach(c=>{
+    html+=`<div class="msg me">${c.me}</div>`;
+    html+=`<div class="msg him">${c.him}</div>`;
   });
+
+  chat.innerHTML=html;
 }
 
+// 📩 发送（沉浸效果）
 function send(){
-  let text=document.getElementById("chatInput").value;
+  let text=input.value;
   if(!text) return;
 
-  let data = JSON.parse(localStorage.getItem("music")||"[]");
+  let data=JSON.parse(localStorage.getItem("music")||"[]");
 
-  data[current].messages.push({role:"user",content:text});
-  data[current].messages.push({role:"ai",content:reply(text)});
-
+  data[current].chat.push({me:text,him:"..."});
   localStorage.setItem("music",JSON.stringify(data));
 
-  document.getElementById("chatInput").value="";
-
   render();
-}
 
-function reply(text){
-  let r=[
-    "你现在说的，比你表现出来的更重一点。",
-    "这首歌，好像刚好把你卡住的地方碰到了。",
-    "你不是想太多，是你真的在感受。",
-    "我在听，你慢慢说。",
-    "这种感觉，你已经撑了一阵子了吧。",
-    "不是歌让你这样，是你刚好需要它。"
-  ];
+  // ⏳ 模拟“思考”
+  setTimeout(()=>{
+    data=JSON.parse(localStorage.getItem("music")||"[]");
+    data[current].chat[data[current].chat.length-1].him=reply(text);
+    localStorage.setItem("music",JSON.stringify(data));
+    render();
+  },800);
 
-  return r[Math.floor(Math.random()*r.length)];
+  input.value="";
 }
 
 load();
