@@ -3,74 +3,127 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ROOM · 颜澈</title>
+<title>blue diary</title>
 
 <style>
+
+/* ===== 全局风格（关键）===== */
 body{
-    margin:0;
-    font-family:-apple-system,BlinkMacSystemFont;
-    background: linear-gradient(135deg,#0f172a,#1e293b,#312e81);
-    color:#fff;
+  margin:0;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
+  background:
+    radial-gradient(circle at 20% 30%, rgba(255,255,255,0.06), transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(255,255,255,0.05), transparent 40%),
+    linear-gradient(180deg,#0b1220,#141e33);
+  color:#fff;
 }
 
+/* 星空颗粒 */
+body::after{
+  content:"";
+  position:fixed;
+  width:100%;
+  height:100%;
+  background-image:url('https://grainy-gradients.vercel.app/noise.svg');
+  opacity:0.08;
+  pointer-events:none;
+}
+
+/* ===== 容器 ===== */
 .container{
-    max-width:600px;
-    margin:auto;
-    padding:20px;
+  max-width:520px;
+  margin:auto;
+  padding:20px;
 }
 
-h1{
-    font-size:28px;
-    margin-bottom:20px;
-}
-
-input, textarea{
-    width:100%;
-    margin-bottom:12px;
-    padding:14px;
-    border:none;
-    border-radius:14px;
-    background:rgba(255,255,255,0.1);
-    color:#fff;
-    font-size:14px;
-}
-
-button{
-    width:100%;
-    padding:14px;
-    border:none;
-    border-radius:16px;
-    background:linear-gradient(90deg,#6366f1,#3b82f6);
-    color:white;
-    font-size:16px;
-}
-
-.card{
-    margin-top:20px;
-    padding:18px;
-    border-radius:18px;
-    background:rgba(255,255,255,0.08);
-    backdrop-filter:blur(10px);
-}
-
+/* ===== 标题 ===== */
 .title{
-    font-size:18px;
-    font-weight:bold;
-    margin-bottom:6px;
+  font-size:26px;
+  font-weight:600;
+  margin-bottom:20px;
+  letter-spacing:1px;
 }
 
-.feel{
-    opacity:0.8;
-    margin-bottom:10px;
+/* ===== 输入框 ===== */
+.input{
+  width:100%;
+  padding:14px;
+  margin:10px 0;
+  border-radius:16px;
+  border:none;
+  background:rgba(255,255,255,0.06);
+  color:#fff;
+  backdrop-filter:blur(10px);
 }
 
+/* ===== 按钮 ===== */
+.button{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:20px;
+  margin-top:10px;
+  background:linear-gradient(90deg,#6a7cff,#4fa3ff);
+  color:#fff;
+  font-size:16px;
+}
+
+/* ===== 标签（空气感）===== */
+.tags{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:15px 0;
+}
+
+.tag{
+  padding:6px 12px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,0.2);
+  font-size:12px;
+  opacity:0.7;
+}
+
+.tag.active{
+  border-color:#6a7cff;
+  color:#6a7cff;
+  box-shadow:0 0 10px rgba(106,124,255,0.5);
+}
+
+/* ===== 卡片 ===== */
+.card{
+  margin-top:20px;
+  padding:18px;
+  border-radius:22px;
+  background:rgba(255,255,255,0.05);
+  backdrop-filter:blur(15px);
+}
+
+/* ===== 拼豆封面 ===== */
+.cover{
+  width:60px;
+  height:60px;
+  border-radius:16px;
+  margin-bottom:10px;
+  image-rendering:pixelated;
+}
+
+/* ===== 回复 ===== */
 .reply{
-    background:rgba(255,255,255,0.05);
-    padding:10px;
-    border-radius:10px;
-    margin-top:6px;
-    font-size:13px;
+  margin-top:10px;
+  padding:10px;
+  border-radius:12px;
+  background:rgba(255,255,255,0.05);
+  font-size:14px;
+  line-height:1.6;
 }
+
+/* 微动效 */
+.card:hover{
+  transform:translateY(-3px);
+  transition:0.3s;
+}
+
 </style>
 </head>
 
@@ -78,11 +131,19 @@ button{
 
 <div class="container">
 
-<h1>ROOM · 颜澈</h1>
+<div class="title">blue diary</div>
 
-<input id="song" placeholder="今天的歌（歌名+歌手）">
-<textarea id="feeling" placeholder="你现在的感觉..."></textarea>
-<button onclick="save()">保存</button>
+<input class="input" id="song" placeholder="今天的歌">
+<input class="input" id="mood" placeholder="你的感觉">
+
+<div class="tags">
+  <div class="tag active">晴朗</div>
+  <div class="tag">平静</div>
+  <div class="tag">阴雨</div>
+  <div class="tag">起风</div>
+</div>
+
+<button class="button" onclick="save()">保存</button>
 
 <div id="list"></div>
 
@@ -90,60 +151,49 @@ button{
 
 <script>
 
-function getReplies(text){
-    let base = [
-        "这种情绪其实很真实，不用掩饰。",
-        "你在慢慢表达自己，这很好。",
-        "这首歌像是在替你说话。",
-        "感觉你在一个比较安静的状态里。",
-        "有点情绪，但也很克制。",
-        "这种感觉挺值得被记住的。",
-        "你不是随便听歌，是在感受。",
-        "有点孤独，但不糟糕。",
-        "你在认真生活，这很难得。"
-    ];
+/* ===== 拼豆风封面（设计过的）===== */
+const covers = [
+'https://i.imgur.com/YZ6F2oX.png',
+'https://i.imgur.com/l49aYS3.png',
+'https://i.imgur.com/8QpXz2R.png',
+'https://i.imgur.com/3h5PqkG.png',
+'https://i.imgur.com/tZz6XQO.png'
+];
 
-    // 打乱顺序 + 取3条
-    return base.sort(()=>0.5-Math.random()).slice(0,3);
+/* ===== 高级回复系统（不重复）===== */
+function getReplies(mood){
+  const base = [
+    "这种情绪是有重量的，但你在慢慢承接它。",
+    "你没有逃避，而是在感受，这很珍贵。",
+    "有些状态不需要解决，只需要被看见。",
+    "你在一点点靠近真实的自己。",
+    "情绪不是问题，是信号。",
+    "你其实已经在变好了，只是自己还没发现。"
+  ];
+
+  return base.sort(()=>0.5-Math.random()).slice(0,3);
 }
 
+/* ===== 保存 ===== */
 function save(){
-    let song = document.getElementById("song").value;
-    let feeling = document.getElementById("feeling").value;
+  const song = document.getElementById("song").value;
+  const mood = document.getElementById("mood").value;
 
-    if(!song) return;
+  const cover = covers[Math.floor(Math.random()*covers.length)];
+  const replies = getReplies(mood);
 
-    let data = JSON.parse(localStorage.getItem("room") || "[]");
+  const card = document.createElement("div");
+  card.className="card";
 
-    data.unshift({
-        song,
-        feeling,
-        replies: getReplies(feeling)
-    });
+  card.innerHTML = `
+    <img src="${cover}" class="cover">
+    <div><b>🎵 ${song}</b></div>
+    <div style="opacity:0.7;margin-top:6px;">☁ ${mood}</div>
+    ${replies.map(r=>`<div class="reply">❤ ${r}</div>`).join("")}
+  `;
 
-    localStorage.setItem("room", JSON.stringify(data));
-    render();
+  document.getElementById("list").prepend(card);
 }
-
-function render(){
-    let data = JSON.parse(localStorage.getItem("room") || "[]");
-    let html = "";
-
-    data.forEach(item=>{
-        html += `
-        <div class="card">
-            <div class="title">🎵 ${item.song}</div>
-            <div class="feel">💭 ${item.feeling || "（没有写感受）"}</div>
-
-            ${item.replies.map(r=>`<div class="reply">🤍 ${r}</div>`).join("")}
-        </div>
-        `;
-    });
-
-    document.getElementById("list").innerHTML = html;
-}
-
-render();
 
 </script>
 
