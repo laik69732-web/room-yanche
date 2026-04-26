@@ -1,205 +1,384 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>blue diary</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>夜语 · 情绪日记</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&amp;family=Playfair+Display:wght@400;700&display=swap');
+        
+        :root {
+            --primary: #4A6CF7;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', system-ui, sans-serif;
+        }
+        
+        .title-font {
+            font-family: 'Playfair Display', serif;
+        }
 
-<style>
+        .glass {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-/* ===== 背景（流动光）===== */
-body{
-  margin:0;
-  font-family:-apple-system;
-  color:#fff;
-  background: linear-gradient(-45deg,#0b1220,#1b2a4a,#1a1f38,#101726);
-  background-size:400% 400%;
-  animation:bgMove 12s ease infinite;
-}
+        .card {
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
 
-@keyframes bgMove{
-  0%{background-position:0% 50%}
-  50%{background-position:100% 50%}
-  100%{background-position:0% 50%}
-}
+        .tag {
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
 
-/* ===== 容器 ===== */
-.container{
-  max-width:520px;
-  margin:auto;
-  padding:20px;
-}
+        .tag:hover {
+            transform: scale(1.08) translateY(-2px);
+        }
 
-/* ===== 标题 ===== */
-.title{
-  font-size:28px;
-  font-weight:600;
-  margin-bottom:20px;
-}
+        .tag.selected {
+            background: linear-gradient(135deg, #4A6CF7, #7C3AED);
+            color: white;
+            box-shadow: 0 0 25px rgba(74, 108, 247, 0.6);
+            transform: scale(1.05);
+        }
 
-/* ===== 输入 ===== */
-.input{
-  width:100%;
-  padding:14px;
-  margin:10px 0;
-  border-radius:16px;
-  border:none;
-  background:rgba(255,255,255,0.06);
-  color:#fff;
-  backdrop-filter:blur(10px);
-}
+        .tag::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transform: translateX(-150%);
+            animation: shine 4s infinite;
+        }
 
-/* ===== 按钮（呼吸感）===== */
-.button{
-  width:100%;
-  padding:14px;
-  border:none;
-  border-radius:20px;
-  margin-top:10px;
-  background:linear-gradient(90deg,#6a7cff,#4fa3ff);
-  color:#fff;
-  font-size:16px;
-  animation:glow 2s infinite alternate;
-}
+        @keyframes shine {
+            0% { transform: translateX(-150%); }
+            20% { transform: translateX(300%); }
+            100% { transform: translateX(300%); }
+        }
 
-@keyframes glow{
-  from{box-shadow:0 0 10px rgba(100,120,255,0.4)}
-  to{box-shadow:0 0 20px rgba(100,120,255,0.8)}
-}
+        .save-btn {
+            position: relative;
+            overflow: hidden;
+        }
 
-/* ===== 标签 ===== */
-.tags{
-  display:flex;
-  gap:10px;
-  margin:15px 0;
-}
+        .save-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
 
-.tag{
-  padding:6px 12px;
-  border-radius:999px;
-  border:1px solid rgba(255,255,255,0.2);
-  font-size:12px;
-  transition:0.3s;
-}
+        .save-btn:hover::before {
+            transform: translateX(300%);
+        }
 
-.tag.active{
-  border-color:#6a7cff;
-  color:#6a7cff;
-  box-shadow:0 0 12px rgba(106,124,255,0.6);
-}
+        .record-card {
+            opacity: 0;
+            transform: translateY(40px);
+            animation: cardPop 0.6s forwards cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
 
-/* ===== 卡片动画 ===== */
-.card{
-  margin-top:20px;
-  padding:18px;
-  border-radius:22px;
-  background:rgba(255,255,255,0.05);
-  backdrop-filter:blur(15px);
-  transform:translateY(20px);
-  opacity:0;
-  animation:fadeIn 0.6s forwards;
-}
+        @keyframes cardPop {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-@keyframes fadeIn{
-  to{
-    transform:translateY(0);
-    opacity:1;
-  }
-}
+        .background {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #0F172A 0%, #1E1B4B 50%, #312E81 100%);
+            z-index: -1;
+            animation: bgFlow 25s ease infinite;
+        }
 
-/* ===== 拼豆（浮动）===== */
-.cover{
-  width:60px;
-  height:60px;
-  border-radius:16px;
-  margin-bottom:10px;
-  animation:float 3s ease-in-out infinite;
-}
+        @keyframes bgFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
 
-@keyframes float{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-6px)}
-}
+        .bean {
+            position: absolute;
+            width: 28px;
+            height: 28px;
+            background-size: cover;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+            pointer-events: none;
+            z-index: 1;
+            animation: floatBean 12s ease-in-out infinite;
+        }
 
-/* ===== 回复 ===== */
-.reply{
-  margin-top:10px;
-  padding:10px;
-  border-radius:12px;
-  background:rgba(255,255,255,0.05);
-  font-size:14px;
-  animation:fadeIn 0.8s forwards;
-}
-
-</style>
+        @keyframes floatBean {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-25px) rotate(8deg); }
+        }
+    </style>
 </head>
+<body class="bg-[#0F172A] text-white min-h-screen overflow-x-hidden relative">
+    <!-- 动态背景 -->
+    <div class="background"></div>
 
-<body>
+    <!-- 拼豆装饰（手工感） -->
+    <div id="beans" class="fixed inset-0 pointer-events-none"></div>
 
-<div class="container">
+    <div class="max-w-2xl mx-auto p-6 pb-24 relative z-10">
+        <!-- 标题 -->
+        <div class="flex items-center justify-center gap-3 mb-10 mt-8">
+            <div class="w-9 h-9 bg-gradient-to-br from-purple-400 to-blue-400 rounded-2xl flex items-center justify-center text-2xl shadow-lg">🌙</div>
+            <h1 class="title-font text-4xl tracking-tight font-light">夜语</h1>
+        </div>
 
-<div class="title">blue diary</div>
+        <!-- 输入卡片 -->
+        <div class="glass rounded-3xl p-8 mb-10 shadow-2xl">
+            <div class="space-y-8">
+                <!-- 今日歌曲 -->
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="text-2xl">🎵</span>
+                        <p class="text-sm tracking-widest text-zinc-400 font-medium">今天听了什么歌？</p>
+                    </div>
+                    <input id="songInput" 
+                           type="text" 
+                           placeholder="比如……《夜空中最亮的星》"
+                           class="w-full bg-transparent border border-white/20 focus:border-white/40 rounded-2xl px-6 py-4 text-lg placeholder:text-zinc-500 focus:outline-none transition-all">
+                </div>
 
-<input class="input" id="song" placeholder="今天的歌">
-<input class="input" id="mood" placeholder="你的感觉">
+                <!-- 当前情绪 -->
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="text-2xl">☁️</span>
+                        <p class="text-sm tracking-widest text-zinc-400 font-medium">此刻的心情是……</p>
+                    </div>
+                    
+                    <!-- 情绪标签 -->
+                    <div id="tagsContainer" class="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                        <!-- JS动态生成 -->
+                    </div>
+                </div>
 
-<div class="tags">
-  <div class="tag active">晴朗</div>
-  <div class="tag">平静</div>
-  <div class="tag">阴雨</div>
-  <div class="tag">起风</div>
-</div>
+                <!-- AI陪伴输入 -->
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="text-2xl">💬</span>
+                        <p class="text-sm tracking-widest text-zinc-400 font-medium">想和我说说吗？</p>
+                    </div>
+                    <textarea id="contentInput" rows="4"
+                              placeholder="今天过得怎么样……我在这里，听你说。"
+                              class="w-full bg-transparent border border-white/20 focus:border-white/40 rounded-3xl px-6 py-5 text-base placeholder:text-zinc-500 resize-none focus:outline-none transition-all"></textarea>
+                </div>
 
-<button class="button" onclick="save()">保存</button>
+                <!-- 保存按钮 -->
+                <button onclick="saveRecord()" 
+                        class="save-btn w-full py-5 rounded-3xl bg-gradient-to-r from-blue-500 via-purple-500 to-violet-500 font-medium text-lg tracking-wider shadow-xl hover:shadow-2xl active:scale-[0.985] transition-all flex items-center justify-center gap-3">
+                    <i class="fa-solid fa-feather-pointed"></i>
+                    <span>写下来，留给今晚的我</span>
+                </button>
+            </div>
+        </div>
 
-<div id="list"></div>
+        <!-- 记录列表标题 -->
+        <div class="flex items-center justify-between mb-6 px-2">
+            <h2 class="text-xl font-light tracking-widest text-zinc-300">我的夜语记录</h2>
+            <div class="text-xs text-zinc-500">共 <span id="recordCount">0</span> 条</div>
+        </div>
 
-</div>
+        <!-- 记录展示区 -->
+        <div id="recordsContainer" class="space-y-6">
+            <!-- JS动态插入记录卡片 -->
+        </div>
+    </div>
 
-<script>
+    <script>
+        // 情绪标签数据（可随时扩展）
+        const emotions = [
+            { name: "平静", emoji: "🌊" },
+            { name: "温柔", emoji: "🌸" },
+            { name: "孤独", emoji: "🌙" },
+            { name: "喜悦", emoji: "✨" },
+            { name: "疲惫", emoji: "☕" },
+            { name: "期待", emoji: "🌟" },
+            { name: "失落", emoji: "🌧️" },
+            { name: "温暖", emoji: "🧸" },
+            { name: "迷茫", emoji: "🌫️" },
+            { name: "兴奋", emoji: "🎇" },
+            { name: "安心", emoji: "🛡️" },
+            { name: "怀念", emoji: "📷" }
+        ];
 
-/* ===== 拼豆（稳定图，不会404）===== */
-const covers=[
-'https://picsum.photos/100?1',
-'https://picsum.photos/100?2',
-'https://picsum.photos/100?3',
-'https://picsum.photos/100?4'
-];
+        let selectedTags = [];
+        let records = JSON.parse(localStorage.getItem('nightDiaryRecords')) || [];
 
-/* ===== 高级回复 ===== */
-function getReplies(){
-  const list=[
-    "你在一点点靠近真实的自己。",
-    "这种情绪是有重量的，但你在慢慢承接它。",
-    "你没有逃避，而是在感受。",
-    "有些状态不需要解决。",
-    "你其实已经在变好了。"
-  ];
-  return list.sort(()=>0.5-Math.random()).slice(0,3);
-}
+        // 创建拼豆装饰
+        function createBeans() {
+            const beansContainer = document.getElementById('beans');
+            const beanImages = [
+                'https://picsum.photos/id/1015/80/80',
+                'https://picsum.photos/id/237/80/80',
+                'https://picsum.photos/id/669/80/80',
+                'https://picsum.photos/id/201/80/80',
+                'https://picsum.photos/id/133/80/80'
+            ];
+            
+            for (let i = 0; i < 28; i++) {
+                const bean = document.createElement('div');
+                bean.className = 'bean';
+                bean.style.left = Math.random() * 100 + 'vw';
+                bean.style.top = Math.random() * 100 + 'vh';
+                bean.style.animationDelay = Math.random() * -20 + 's';
+                bean.style.opacity = Math.random() * 0.4 + 0.25;
+                bean.style.width = bean.style.height = (22 + Math.random() * 18) + 'px';
+                
+                // 随机选择拼豆图片（实际项目中替换成你统一风格的拼豆图片）
+                bean.style.backgroundImage = `url(${beanImages[Math.floor(Math.random() * beanImages.length)]})`;
+                bean.style.borderRadius = '50%';
+                beansContainer.appendChild(bean);
+            }
+        }
 
-/* ===== 保存 ===== */
-function save(){
-  const song=document.getElementById("song").value;
-  const mood=document.getElementById("mood").value;
+        // 渲染情绪标签
+        function renderTags() {
+            const container = document.getElementById('tagsContainer');
+            container.innerHTML = '';
 
-  const cover=covers[Math.floor(Math.random()*covers.length)];
-  const replies=getReplies();
+            emotions.forEach((emotion, index) => {
+                const tag = document.createElement('div');
+                tag.className = `tag glass rounded-2xl px-5 py-3 text-center cursor-pointer select-none flex items-center justify-center gap-2 text-sm border border-white/10`;
+                tag.innerHTML = `
+                    <span class="text-xl">${emotion.emoji}</span>
+                    <span>${emotion.name}</span>
+                `;
+                
+                tag.addEventListener('click', () => {
+                    if (selectedTags.includes(emotion.name)) {
+                        selectedTags = selectedTags.filter(t => t !== emotion.name);
+                        tag.classList.remove('selected');
+                    } else {
+                        selectedTags.push(emotion.name);
+                        tag.classList.add('selected');
+                    }
+                });
+                
+                container.appendChild(tag);
+            });
+        }
 
-  const card=document.createElement("div");
-  card.className="card";
+        // 保存记录
+        function saveRecord() {
+            const song = document.getElementById('songInput').value.trim();
+            const content = document.getElementById('contentInput').value.trim();
+            
+            if (!content && selectedTags.length === 0) {
+                alert('至少写点什么，或者选一个心情吧～');
+                return;
+            }
 
-  card.innerHTML=`
-    <img src="${cover}" class="cover">
-    <div><b>🎵 ${song}</b></div>
-    <div style="opacity:0.7;">☁ ${mood}</div>
-    ${replies.map(r=>`<div class="reply">❤️ ${r}</div>`).join("")}
-  `;
+            const newRecord = {
+                id: Date.now(),
+                date: new Date().toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', weekday: 'short' }),
+                time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }),
+                song: song || "没有记录歌曲",
+                tags: [...selectedTags],
+                content: content || "今天只想静静地陪着自己。",
+            };
 
-  document.getElementById("list").prepend(card);
-}
+            records.unshift(newRecord);
+            localStorage.setItem('nightDiaryRecords', JSON.stringify(records));
+            
+            // 清空输入
+            document.getElementById('songInput').value = '';
+            document.getElementById('contentInput').value = '';
+            selectedTags = [];
+            
+            // 重新渲染标签和记录
+            renderTags();
+            renderRecords();
+            
+            // 轻微成功反馈
+            const btn = document.querySelector('.save-btn');
+            btn.innerHTML = `<i class="fa-solid fa-check"></i> 已悄悄收录`;
+            setTimeout(() => {
+                btn.innerHTML = `<i class="fa-solid fa-feather-pointed"></i><span>写下来，留给今晚的我</span>`;
+            }, 1800);
+        }
 
-</script>
+        // 渲染记录卡片
+        function renderRecords() {
+            const container = document.getElementById('recordsContainer');
+            container.innerHTML = '';
+            document.getElementById('recordCount').textContent = records.length;
 
+            records.forEach((record, index) => {
+                const card = document.createElement('div');
+                card.className = `record-card glass rounded-3xl p-7 shadow-xl`;
+                card.style.animationDelay = `${index * 80}ms`;
+                
+                let tagsHTML = '';
+                if (record.tags && record.tags.length > 0) {
+                    tagsHTML = `<div class="flex flex-wrap gap-2 mt-4">` +
+                        record.tags.map(tag => 
+                            `<span class="inline-block bg-white/10 text-xs px-4 py-1.5 rounded-2xl">${tag}</span>`
+                        ).join('') + `</div>`;
+                }
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div class="flex items-center gap-3 text-xs text-zinc-400">
+                                <span>${record.date}</span>
+                                <span class="w-1 h-1 bg-white/30 rounded-full"></span>
+                                <span>${record.time}</span>
+                            </div>
+                            ${record.song ? `<div class="mt-2 flex items-center gap-2 text-sm text-blue-300">
+                                <i class="fa-solid fa-music"></i>
+                                <span class="line-clamp-1">${record.song}</span>
+                            </div>` : ''}
+                        </div>
+                        <div class="text-3xl opacity-70">📖</div>
+                    </div>
+
+                    <div class="my-6 text-[17px] leading-relaxed text-zinc-100 min-h-[60px]">
+                        ${record.content}
+                    </div>
+
+                    ${tagsHTML}
+
+                    <div class="mt-6 pt-5 border-t border-white/10 text-[13px] text-zinc-500 flex items-center gap-2">
+                        <span class="text-lg">💭</span>
+                        <span>我懂你，今晚也好好休息吧。</span>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        // 初始化
+        function init() {
+            createBeans();
+            renderTags();
+            renderRecords();
+            
+            // 按下 Enter 保存（textarea）
+            document.getElementById('contentInput').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    saveRecord();
+                }
+            });
+        }
+
+        window.onload = init;
+    </script>
 </body>
 </html>
