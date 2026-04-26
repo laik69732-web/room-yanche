@@ -7,170 +7,143 @@
 
 <style>
 body{
-  margin:0;
-  font-family:-apple-system,BlinkMacSystemFont;
-  background: linear-gradient(135deg,#0f172a,#1e293b,#312e81);
-  color:#fff;
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont;
+    background: linear-gradient(135deg,#0f172a,#1e293b,#312e81);
+    color:#fff;
 }
 
 .container{
-  padding:20px;
-  max-width:600px;
-  margin:auto;
+    max-width:600px;
+    margin:auto;
+    padding:20px;
 }
 
 h1{
-  font-size:28px;
-  margin-bottom:20px;
+    font-size:28px;
+    margin-bottom:20px;
 }
 
-input,textarea{
-  width:100%;
-  padding:14px;
-  margin-bottom:10px;
-  border:none;
-  border-radius:14px;
-  background:rgba(255,255,255,0.1);
-  color:#fff;
+input, textarea{
+    width:100%;
+    margin-bottom:12px;
+    padding:14px;
+    border:none;
+    border-radius:14px;
+    background:rgba(255,255,255,0.1);
+    color:#fff;
+    font-size:14px;
 }
 
 button{
-  width:100%;
-  padding:14px;
-  border:none;
-  border-radius:14px;
-  background:linear-gradient(90deg,#6366f1,#3b82f6);
-  color:white;
-  font-size:16px;
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:16px;
+    background:linear-gradient(90deg,#6366f1,#3b82f6);
+    color:white;
+    font-size:16px;
 }
 
 .card{
-  margin-top:20px;
-  padding:18px;
-  border-radius:18px;
-  background:rgba(255,255,255,0.08);
-  backdrop-filter:blur(10px);
+    margin-top:20px;
+    padding:18px;
+    border-radius:18px;
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(10px);
 }
 
 .title{
-  font-size:18px;
-  font-weight:bold;
+    font-size:18px;
+    font-weight:bold;
+    margin-bottom:6px;
+}
+
+.feel{
+    opacity:0.8;
+    margin-bottom:10px;
 }
 
 .reply{
-  margin-top:10px;
-  color:#cbd5f5;
-  font-size:14px;
+    background:rgba(255,255,255,0.05);
+    padding:10px;
+    border-radius:10px;
+    margin-top:6px;
+    font-size:13px;
 }
 </style>
 </head>
 
 <body>
+
 <div class="container">
 
 <h1>ROOM · 颜澈</h1>
 
 <input id="song" placeholder="今天的歌（歌名+歌手）">
 <textarea id="feeling" placeholder="你现在的感觉..."></textarea>
-
 <button onclick="save()">保存</button>
 
 <div id="list"></div>
-
-<hr style="margin:30px 0;opacity:0.2">
-
-<h1>📓 日记</h1>
-
-<textarea id="diary" placeholder="今天发生了什么..."></textarea>
-<button onclick="saveDiary()">保存日记</button>
-
-<div id="diaryList"></div>
 
 </div>
 
 <script>
 
-const replies = [
-"你不是在听歌，你是在对某一段记忆反复确认。",
-"有些情绪不是突然出现的，是一直没走。",
-"这首歌像是在替你说你没说出口的话。",
-"你在想的，可能不是那个人，而是那个时候的自己。",
-"有时候喜欢一首歌，是因为它刚好在你最需要的时候出现。",
-"你没有变，只是更清楚自己要什么了。",
-"情绪没有对错，它只是提醒你还在认真生活。",
-"你记住的不是旋律，是那一刻的你。",
-"有些歌不会过期，因为情绪不会。",
-"你不是脆弱，只是感受太清楚了。"
-];
+function getReplies(text){
+    let base = [
+        "这种情绪其实很真实，不用掩饰。",
+        "你在慢慢表达自己，这很好。",
+        "这首歌像是在替你说话。",
+        "感觉你在一个比较安静的状态里。",
+        "有点情绪，但也很克制。",
+        "这种感觉挺值得被记住的。",
+        "你不是随便听歌，是在感受。",
+        "有点孤独，但不糟糕。",
+        "你在认真生活，这很难得。"
+    ];
 
-function getReply(){
-  return replies[Math.floor(Math.random()*replies.length)];
+    // 打乱顺序 + 取3条
+    return base.sort(()=>0.5-Math.random()).slice(0,3);
 }
 
 function save(){
-  let song = document.getElementById("song").value;
-  let feeling = document.getElementById("feeling").value;
+    let song = document.getElementById("song").value;
+    let feeling = document.getElementById("feeling").value;
 
-  let data = JSON.parse(localStorage.getItem("music")||"[]");
+    if(!song) return;
 
-  data.unshift({
-    song,
-    feeling,
-    reply:getReply()
-  });
+    let data = JSON.parse(localStorage.getItem("room") || "[]");
 
-  localStorage.setItem("music",JSON.stringify(data));
-  load();
+    data.unshift({
+        song,
+        feeling,
+        replies: getReplies(feeling)
+    });
+
+    localStorage.setItem("room", JSON.stringify(data));
+    render();
 }
 
-function load(){
-  let data = JSON.parse(localStorage.getItem("music")||"[]");
-  let html="";
+function render(){
+    let data = JSON.parse(localStorage.getItem("room") || "[]");
+    let html = "";
 
-  data.forEach(d=>{
-    html+=`
-    <div class="card">
-      <div class="title">${d.song||""}</div>
-      <div>${d.feeling||""}</div>
-      <div class="reply">💬 ${d.reply||""}</div>
-    </div>
-    `;
-  });
+    data.forEach(item=>{
+        html += `
+        <div class="card">
+            <div class="title">🎵 ${item.song}</div>
+            <div class="feel">💭 ${item.feeling || "（没有写感受）"}</div>
 
-  document.getElementById("list").innerHTML=html;
+            ${item.replies.map(r=>`<div class="reply">🤍 ${r}</div>`).join("")}
+        </div>
+        `;
+    });
+
+    document.getElementById("list").innerHTML = html;
 }
 
-function saveDiary(){
-  let text=document.getElementById("diary").value;
-  let data=JSON.parse(localStorage.getItem("diary")||"[]");
-
-  data.unshift({
-    text,
-    reply:getReply()
-  });
-
-  localStorage.setItem("diary",JSON.stringify(data));
-  loadDiary();
-}
-
-function loadDiary(){
-  let data=JSON.parse(localStorage.getItem("diary")||"[]");
-  let html="";
-
-  data.forEach(d=>{
-    html+=`
-    <div class="card">
-      <div>${d.text}</div>
-      <div class="reply">💬 ${d.reply}</div>
-    </div>
-    `;
-  });
-
-  document.getElementById("diaryList").innerHTML=html;
-}
-
-load();
-loadDiary();
+render();
 
 </script>
 
