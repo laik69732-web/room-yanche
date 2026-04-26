@@ -7,26 +7,20 @@
 
 <style>
 
-/* ===== 全局风格（关键）===== */
+/* ===== 背景（流动光）===== */
 body{
   margin:0;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
-  background:
-    radial-gradient(circle at 20% 30%, rgba(255,255,255,0.06), transparent 40%),
-    radial-gradient(circle at 80% 70%, rgba(255,255,255,0.05), transparent 40%),
-    linear-gradient(180deg,#0b1220,#141e33);
+  font-family:-apple-system;
   color:#fff;
+  background: linear-gradient(-45deg,#0b1220,#1b2a4a,#1a1f38,#101726);
+  background-size:400% 400%;
+  animation:bgMove 12s ease infinite;
 }
 
-/* 星空颗粒 */
-body::after{
-  content:"";
-  position:fixed;
-  width:100%;
-  height:100%;
-  background-image:url('https://grainy-gradients.vercel.app/noise.svg');
-  opacity:0.08;
-  pointer-events:none;
+@keyframes bgMove{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
 }
 
 /* ===== 容器 ===== */
@@ -38,13 +32,12 @@ body::after{
 
 /* ===== 标题 ===== */
 .title{
-  font-size:26px;
+  font-size:28px;
   font-weight:600;
   margin-bottom:20px;
-  letter-spacing:1px;
 }
 
-/* ===== 输入框 ===== */
+/* ===== 输入 ===== */
 .input{
   width:100%;
   padding:14px;
@@ -56,7 +49,7 @@ body::after{
   backdrop-filter:blur(10px);
 }
 
-/* ===== 按钮 ===== */
+/* ===== 按钮（呼吸感）===== */
 .button{
   width:100%;
   padding:14px;
@@ -66,13 +59,18 @@ body::after{
   background:linear-gradient(90deg,#6a7cff,#4fa3ff);
   color:#fff;
   font-size:16px;
+  animation:glow 2s infinite alternate;
 }
 
-/* ===== 标签（空气感）===== */
+@keyframes glow{
+  from{box-shadow:0 0 10px rgba(100,120,255,0.4)}
+  to{box-shadow:0 0 20px rgba(100,120,255,0.8)}
+}
+
+/* ===== 标签 ===== */
 .tags{
   display:flex;
   gap:10px;
-  flex-wrap:wrap;
   margin:15px 0;
 }
 
@@ -81,31 +79,46 @@ body::after{
   border-radius:999px;
   border:1px solid rgba(255,255,255,0.2);
   font-size:12px;
-  opacity:0.7;
+  transition:0.3s;
 }
 
 .tag.active{
   border-color:#6a7cff;
   color:#6a7cff;
-  box-shadow:0 0 10px rgba(106,124,255,0.5);
+  box-shadow:0 0 12px rgba(106,124,255,0.6);
 }
 
-/* ===== 卡片 ===== */
+/* ===== 卡片动画 ===== */
 .card{
   margin-top:20px;
   padding:18px;
   border-radius:22px;
   background:rgba(255,255,255,0.05);
   backdrop-filter:blur(15px);
+  transform:translateY(20px);
+  opacity:0;
+  animation:fadeIn 0.6s forwards;
 }
 
-/* ===== 拼豆封面 ===== */
+@keyframes fadeIn{
+  to{
+    transform:translateY(0);
+    opacity:1;
+  }
+}
+
+/* ===== 拼豆（浮动）===== */
 .cover{
   width:60px;
   height:60px;
   border-radius:16px;
   margin-bottom:10px;
-  image-rendering:pixelated;
+  animation:float 3s ease-in-out infinite;
+}
+
+@keyframes float{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-6px)}
 }
 
 /* ===== 回复 ===== */
@@ -115,13 +128,7 @@ body::after{
   border-radius:12px;
   background:rgba(255,255,255,0.05);
   font-size:14px;
-  line-height:1.6;
-}
-
-/* 微动效 */
-.card:hover{
-  transform:translateY(-3px);
-  transition:0.3s;
+  animation:fadeIn 0.8s forwards;
 }
 
 </style>
@@ -151,45 +158,42 @@ body::after{
 
 <script>
 
-/* ===== 拼豆风封面（设计过的）===== */
-const covers = [
-'https://i.imgur.com/YZ6F2oX.png',
-'https://i.imgur.com/l49aYS3.png',
-'https://i.imgur.com/8QpXz2R.png',
-'https://i.imgur.com/3h5PqkG.png',
-'https://i.imgur.com/tZz6XQO.png'
+/* ===== 拼豆（稳定图，不会404）===== */
+const covers=[
+'https://picsum.photos/100?1',
+'https://picsum.photos/100?2',
+'https://picsum.photos/100?3',
+'https://picsum.photos/100?4'
 ];
 
-/* ===== 高级回复系统（不重复）===== */
-function getReplies(mood){
-  const base = [
-    "这种情绪是有重量的，但你在慢慢承接它。",
-    "你没有逃避，而是在感受，这很珍贵。",
-    "有些状态不需要解决，只需要被看见。",
+/* ===== 高级回复 ===== */
+function getReplies(){
+  const list=[
     "你在一点点靠近真实的自己。",
-    "情绪不是问题，是信号。",
-    "你其实已经在变好了，只是自己还没发现。"
+    "这种情绪是有重量的，但你在慢慢承接它。",
+    "你没有逃避，而是在感受。",
+    "有些状态不需要解决。",
+    "你其实已经在变好了。"
   ];
-
-  return base.sort(()=>0.5-Math.random()).slice(0,3);
+  return list.sort(()=>0.5-Math.random()).slice(0,3);
 }
 
 /* ===== 保存 ===== */
 function save(){
-  const song = document.getElementById("song").value;
-  const mood = document.getElementById("mood").value;
+  const song=document.getElementById("song").value;
+  const mood=document.getElementById("mood").value;
 
-  const cover = covers[Math.floor(Math.random()*covers.length)];
-  const replies = getReplies(mood);
+  const cover=covers[Math.floor(Math.random()*covers.length)];
+  const replies=getReplies();
 
-  const card = document.createElement("div");
+  const card=document.createElement("div");
   card.className="card";
 
-  card.innerHTML = `
+  card.innerHTML=`
     <img src="${cover}" class="cover">
     <div><b>🎵 ${song}</b></div>
-    <div style="opacity:0.7;margin-top:6px;">☁ ${mood}</div>
-    ${replies.map(r=>`<div class="reply">❤ ${r}</div>`).join("")}
+    <div style="opacity:0.7;">☁ ${mood}</div>
+    ${replies.map(r=>`<div class="reply">❤️ ${r}</div>`).join("")}
   `;
 
   document.getElementById("list").prepend(card);
