@@ -1,205 +1,176 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh">
 <head>
-<meta charset="utf-8">
-<title>ROOM</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ROOM · 颜澈</title>
 
 <style>
 body{
   margin:0;
-  font-family:-apple-system;
-  background:#02060d;
+  font-family:-apple-system,BlinkMacSystemFont;
+  background: linear-gradient(135deg,#0f172a,#1e293b,#312e81);
   color:#fff;
 }
 
 .container{
-  max-width:500px;
+  padding:20px;
+  max-width:600px;
   margin:auto;
-  padding:20px;
 }
 
-/* 首页 */
-.card{
-  padding:16px;
-  margin-bottom:12px;
-  border-radius:18px;
-  background:rgba(255,255,255,0.05);
+h1{
+  font-size:28px;
+  margin-bottom:20px;
 }
 
-/* 房间（沉浸） */
-.room{
-  position:fixed;
-  top:0;left:0;
-  width:100%;height:100%;
-  background:#02060d;
-  padding:20px;
-  display:none;
-}
-
-.show{display:block}
-
-/* 聊天 */
-.msg{
-  margin:12px 0;
-  max-width:80%;
-  padding:12px;
-  border-radius:14px;
-}
-
-.me{
-  background:#4c7fff;
-  margin-left:auto;
-}
-
-.him{
-  background:rgba(255,255,255,0.08);
-}
-
-/* 输入 */
 input,textarea{
   width:100%;
-  padding:12px;
-  border-radius:12px;
+  padding:14px;
+  margin-bottom:10px;
   border:none;
-  margin-top:10px;
-  background:rgba(255,255,255,0.06);
+  border-radius:14px;
+  background:rgba(255,255,255,0.1);
   color:#fff;
 }
 
 button{
-  margin-top:10px;
   width:100%;
-  padding:12px;
+  padding:14px;
   border:none;
-  border-radius:12px;
-  background:#4c7fff;
+  border-radius:14px;
+  background:linear-gradient(90deg,#6366f1,#3b82f6);
+  color:white;
+  font-size:16px;
 }
 
-.topbar{
-  margin-bottom:10px;
-  opacity:0.6;
+.card{
+  margin-top:20px;
+  padding:18px;
+  border-radius:18px;
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(10px);
+}
+
+.title{
+  font-size:18px;
+  font-weight:bold;
+}
+
+.reply{
+  margin-top:10px;
+  color:#cbd5f5;
+  font-size:14px;
 }
 </style>
 </head>
 
 <body>
-
 <div class="container">
 
-<h2>ROOM</h2>
+<h1>ROOM · 颜澈</h1>
 
-<input id="song" placeholder="歌名 + 歌手">
-<textarea id="feeling" placeholder="这一刻的感觉..."></textarea>
-<button onclick="add()">保存</button>
+<input id="song" placeholder="今天的歌（歌名+歌手）">
+<textarea id="feeling" placeholder="你现在的感觉..."></textarea>
+
+<button onclick="save()">保存</button>
 
 <div id="list"></div>
 
-</div>
+<hr style="margin:30px 0;opacity:0.2">
 
-<!-- 房间 -->
-<div id="room" class="room">
-  <div class="topbar" onclick="closeRoom()">← 返回</div>
-  <h3 id="roomTitle"></h3>
-  <div id="chat"></div>
+<h1>📓 日记</h1>
 
-  <textarea id="input"></textarea>
-  <button onclick="send()">发送</button>
+<textarea id="diary" placeholder="今天发生了什么..."></textarea>
+<button onclick="saveDiary()">保存日记</button>
+
+<div id="diaryList"></div>
+
 </div>
 
 <script>
 
-let current = 0;
+const replies = [
+"你不是在听歌，你是在对某一段记忆反复确认。",
+"有些情绪不是突然出现的，是一直没走。",
+"这首歌像是在替你说你没说出口的话。",
+"你在想的，可能不是那个人，而是那个时候的自己。",
+"有时候喜欢一首歌，是因为它刚好在你最需要的时候出现。",
+"你没有变，只是更清楚自己要什么了。",
+"情绪没有对错，它只是提醒你还在认真生活。",
+"你记住的不是旋律，是那一刻的你。",
+"有些歌不会过期，因为情绪不会。",
+"你不是脆弱，只是感受太清楚了。"
+];
 
-// 🧠 更像人的回复（沉浸版）
-function reply(t){
-  const arr=[
-    "你刚刚那句话，其实没有说完。",
-    "你是在想一个人，还是一个阶段？",
-    "这种感觉不会突然来的，你已经带着它一段时间了。",
-    "你不是突然这样，是慢慢变成这样的。",
-    "你在这个点上停住了，对吗。",
-    "我在，你可以慢慢说。",
-    "这不像是随便说的，更像是压了很久。",
-    "你其实是知道原因的，只是还没说出口。"
-  ];
-  return arr[Math.floor(Math.random()*arr.length)];
+function getReply(){
+  return replies[Math.floor(Math.random()*replies.length)];
 }
 
-// 💾 保存
-function add(){
-  let data=JSON.parse(localStorage.getItem("music")||"[]");
+function save(){
+  let song = document.getElementById("song").value;
+  let feeling = document.getElementById("feeling").value;
 
-  data.push({
-    song:song.value,
-    chat:[{me:feeling.value,him:reply(feeling.value)}]
+  let data = JSON.parse(localStorage.getItem("music")||"[]");
+
+  data.unshift({
+    song,
+    feeling,
+    reply:getReply()
   });
 
   localStorage.setItem("music",JSON.stringify(data));
   load();
 }
 
-// 📀 列表
 function load(){
-  let data=JSON.parse(localStorage.getItem("music")||"[]");
-  list.innerHTML=data.map((d,i)=>`
-    <div class="card" onclick="openRoom(${i})">${d.song}</div>
-  `).join("");
-}
-
-// 🚪 进入房间（关键）
-function openRoom(i){
-  current=i;
-
-  let data=JSON.parse(localStorage.getItem("music")||"[]");
-
-  room.classList.add("show");
-  roomTitle.innerText=data[i].song;
-
-  render();
-}
-
-// ❌ 退出
-function closeRoom(){
-  room.classList.remove("show");
-}
-
-// 💬 渲染聊天
-function render(){
-  let data=JSON.parse(localStorage.getItem("music")||"[]");
+  let data = JSON.parse(localStorage.getItem("music")||"[]");
   let html="";
 
-  data[current].chat.forEach(c=>{
-    html+=`<div class="msg me">${c.me}</div>`;
-    html+=`<div class="msg him">${c.him}</div>`;
+  data.forEach(d=>{
+    html+=`
+    <div class="card">
+      <div class="title">${d.song||""}</div>
+      <div>${d.feeling||""}</div>
+      <div class="reply">💬 ${d.reply||""}</div>
+    </div>
+    `;
   });
 
-  chat.innerHTML=html;
+  document.getElementById("list").innerHTML=html;
 }
 
-// 📩 发送（沉浸效果）
-function send(){
-  let text=input.value;
-  if(!text) return;
+function saveDiary(){
+  let text=document.getElementById("diary").value;
+  let data=JSON.parse(localStorage.getItem("diary")||"[]");
 
-  let data=JSON.parse(localStorage.getItem("music")||"[]");
+  data.unshift({
+    text,
+    reply:getReply()
+  });
 
-  data[current].chat.push({me:text,him:"..."});
-  localStorage.setItem("music",JSON.stringify(data));
+  localStorage.setItem("diary",JSON.stringify(data));
+  loadDiary();
+}
 
-  render();
+function loadDiary(){
+  let data=JSON.parse(localStorage.getItem("diary")||"[]");
+  let html="";
 
-  // ⏳ 模拟“思考”
-  setTimeout(()=>{
-    data=JSON.parse(localStorage.getItem("music")||"[]");
-    data[current].chat[data[current].chat.length-1].him=reply(text);
-    localStorage.setItem("music",JSON.stringify(data));
-    render();
-  },800);
+  data.forEach(d=>{
+    html+=`
+    <div class="card">
+      <div>${d.text}</div>
+      <div class="reply">💬 ${d.reply}</div>
+    </div>
+    `;
+  });
 
-  input.value="";
+  document.getElementById("diaryList").innerHTML=html;
 }
 
 load();
+loadDiary();
 
 </script>
 
